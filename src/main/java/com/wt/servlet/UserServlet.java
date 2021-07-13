@@ -3,6 +3,7 @@ package com.wt.servlet;
 import com.wt.entity.User;
 import com.wt.service.impl.UserServiceImpl;
 import com.wt.utils.JsonUtil;
+import com.wt.utils.PageUtil;
 import com.wt.utils.ResultUtil;
 import com.wt.utils.VerifyCodeUtils;
 
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
+import java.util.List;
 
 @WebServlet("/userServlet")
 public class UserServlet extends BaseServlet {
@@ -76,4 +79,89 @@ public class UserServlet extends BaseServlet {
         out.close();
     }
 
-}
+
+    // 分页查询
+    private void getUsersByPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // 获取分页信息
+        String currentPage = req.getParameter("currentPage");
+        int pageSize = Integer.parseInt(req.getParameter("pageSize"));
+        String username = req.getParameter("username");// 搜索框内容
+
+        // 获取页面信息的JSON对象
+        String page = us.getPage(currentPage, pageSize, new User(username));
+
+        System.out.println(page);
+
+        // 反馈给页面
+        PrintWriter out = resp.getWriter();
+        out.print(page);
+        out.close();
+    }
+
+
+    private void updateUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        // 获取修改信息系
+        int uid = Integer.parseInt(req.getParameter("uid"));
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        String name = req.getParameter("name");
+        String phone = req.getParameter("phone");
+        int status = Integer.parseInt(req.getParameter("status"));
+        int role = Integer.parseInt(req.getParameter("role"));
+        int age = Integer.parseInt(req.getParameter("age"));
+        int sex = Integer.parseInt(req.getParameter("sex"));
+
+        // 封装成User对象
+        User user = new User(uid, name, phone, age, sex, username, password, null, status, null, role);
+
+        // 获取修改反馈信息
+        String res = us.updateUser(user);
+
+        // 反馈给页面
+        PrintWriter out = resp.getWriter();
+        out.print(res);
+        out.close();
+    }
+
+    // 添加User
+    private void addUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        // 获取要添加的数据
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        String name = req.getParameter("name");
+        String phone = req.getParameter("phone");
+        int status = Integer.parseInt(req.getParameter("status"));
+        int role = Integer.parseInt(req.getParameter("role"));
+        int age = Integer.parseInt(req.getParameter("age"));
+        int sex = Integer.parseInt(req.getParameter("sex"));
+
+        // 封装成User对象
+        User user = new User(0, name, phone, age, sex, username, password, "", status, new Date(), role);
+
+        // 获取添加后的反馈信息
+        String res = us.addUser(user);
+
+        // 反馈给页面
+        PrintWriter out = resp.getWriter();
+        out.print(res);
+        out.close();
+    }
+
+    //删除
+    private void delAll(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String uids = req.getParameter("uids");
+
+        String res = us.delAll(uids);
+
+        // 反馈给页面
+        PrintWriter out = resp.getWriter();
+        out.print(res);
+        out.close();
+    }
+
+
+
+
+    }

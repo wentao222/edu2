@@ -18,6 +18,10 @@ public class User {
     public User() {
     }
 
+    public User(String username) {
+        this.username = username;
+    }
+
     public User(int uid, String name, String phone, int age, int sex, String username, String password, String picture, int status, Date createtime, int role) {
         this.uid = uid;
         this.name = name;
